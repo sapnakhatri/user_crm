@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Repositories\Eloquent\ApiRepo as ApiRepo;
 use Log;
+use App\Models\User;
 
 class UserProcess implements ShouldQueue
 {
@@ -27,11 +28,11 @@ class UserProcess implements ShouldQueue
      *
      * @return void
      */
-    public $userid;
+    public $user;
 
-    public function __construct($userid)
+    public function __construct(User $user)
     {
-        $this->userid = $userid; 
+        $this->user = $user; 
     }
 
     /**
@@ -43,9 +44,9 @@ class UserProcess implements ShouldQueue
     {       
         try {
             // make api call
-           Log::info("inside handle".$this->userid);
+           Log::info("inside handle".$this->user->id);
             $apiRepo = new ApiRepo;
-            $response = $apiRepo->getUserDetails($this->userid);
+            $response = $apiRepo->getUserDetails($this->user->id);
             Log::info("Response".$response);
         } catch (\Throwable $exception) {
             if ($this->attempts() > 3) {

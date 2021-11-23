@@ -43,7 +43,8 @@ class UserController extends Controller
 
 	        $token = $user->createToken('auth_token')->plainTextToken;
 	        if($user->save()){
-	        	$this->dispatch(new UserProcess($user->id));
+	        	$job = (new UserProcess($user))->delay(Carbon::now()->addMinutes(1));
+	        	$this->dispatch($job);
 	        
 	        	return response()
 	            ->json(['data' => $user,'status' => '200','message' => 'User Added Successfully','access_token' => $token, 'token_type' => 'Bearer']);
